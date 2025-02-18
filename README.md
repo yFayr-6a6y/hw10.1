@@ -16,4 +16,3 @@
 2.  `pytest` (или `pytest -v` для подробностей)
 
 Отчет покажет пройденные/упавшие тесты.  Файлы тестов: `test_generators.py`, `test_filtering.py`, `test_processing.py`, `test_widget`.
-
