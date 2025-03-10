@@ -1,18 +1,19 @@
-def get_mask_card_number(card_number: str) -> str | None:
-    """Функция, которая принимает на вход номер карты в виде числа и возвращает
-    XXXX XX** **** XXXX"""
-    if len(card_number) < 16:
-        print("Введите номер карты:")
-    return f"{card_number[:7]} ** **** {card_number[-4:]}"
+def get_mask_card_number(card_number: int) -> str:
+    """маскировка номера карты"""
+    card_str = str(card_number)
+    masked_card = f"{card_str[:4]} {card_str[4:6]}** **** {card_str[-4:]}"
+    return masked_card
 
 
-def get_mask_account(mask_account: str) -> str | None:
-    """Функция, которая на вход номер счета в виде числа и возвращает маску
-    номер **XXXX"""
-    if len(mask_account) < 20:
-        print("Введите номер счета:")
-    return f"**{mask_account[-4:]}"
+def get_mask_account(account_number: int) -> str:
+    """маскировка номера счета"""
+    account_str = str(account_number)
+    masked_account = f"**{account_str[-4:]}"
+    return masked_account
 
 
-print(get_mask_card_number("7000792289606361"))
-print(get_mask_account("70008881792289606361"))
+card_number = int(input("enter card number:"))
+account_number = int(input("enter account number:"))
+
+print(get_mask_card_number(card_number))
+print(get_mask_account(account_number))

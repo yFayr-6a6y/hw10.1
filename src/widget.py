@@ -1,35 +1,35 @@
-
-
-from src.masks import get_mask_card_number, get_mask_account
+from typing import Optional, Tuple
+import re
 from datetime import datetime
 
 
-def mask_account_card(card: str | int) -> str | int:
-    new_list = card.split(" ")
-    card_num = []
-    card_alph = []
+def mask_account_card(card_info: str) -> str:
+    """основная функция с подфункциями"""
 
-    for i in new_list:
-        if i.isalpha():
-            card_alph.append(i)
-        else:
-            card_num.append(int(i))
+    def mask_card_number(number: str) -> str:
+        """функция маскировки карты"""
+        return number[:4] + " " + number[4:6] + "** **** " + number[-4:]
 
-    name_letter_card = ' '.join(card_alph)
+    def mask_account_number(number: str) -> str:
+        """тоже маскиоровка карты"""
+        return "**" + number[-4:]
 
+    card_pattern = re.compile(r"(Visa|Maestro) (\d{16})")
+    account_pattern = re.compile(r"(Счет) (\d{20})")
 
-    if name_letter_card == 'Счет':
-        name_number_card = get_mask_account(''. join(card_num))
+    if card_pattern.match(card_info):
+        card_type, card_number = card_pattern.match(card_info).groups()
+        return f"{card_type} {mask_card_number(card_number)}"
+    elif account_pattern.match(card_info):
+        account_type, account_number = account_pattern.match(card_info).groups()
+        return f"{account_type} {mask_account_number(account_number)}"
     else:
-        name_number_card = get_mask_card_number (''.join(card_num))
+        return card_info
 
 
-    return f'{name_letter_card} {name_number_card}'
+def get_date(date_str: str) -> str:
+    """функция для даты"""
+    from datetime import datetime
 
-def get_date(my_date: str) -> str:
-    date_object = datetime.strptime(my_date, "%Y-%m-%dT%H:%M:%S.%f")
-    return date_object. strftime("2024-03-11T02:26:18.67140")
-
-
-
-print(get_date("2024-03-11T02:26:18.67140"))
+    date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f")
+    return date_obj.strftime("%d.%m.%Y")
