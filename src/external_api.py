@@ -1,11 +1,18 @@
 import os
 import requests
+import json  # Импорт json явно
+import logging  # Импорт logging
 from dotenv import load_dotenv
 
 load_dotenv()  # Загружаем переменные окружения из .env
 
 API_KEY = os.getenv('EXCHANGE_RATES_API_KEY')
 BASE_URL = "https://api.apilayer.com/exchangerates_data/latest"
+
+# Настройка логирования (лучше сделать это один раз в начале программы)
+logging.basicConfig(level=logging.ERROR, filename="app.log", filemode="w",
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 def convert_to_rub(amount, currency):
     """
@@ -17,6 +24,7 @@ def convert_to_rub(amount, currency):
 
     Returns:
         float: Сумма в рублях.
+        Возвращает None, если не удалось получить курс обмена.
     """
     if currency == 'RUB':
         return amount
@@ -29,14 +37,21 @@ def convert_to_rub(amount, currency):
 
     try:
         response = requests.get(url, headers=headers)
-        response.raise_for_status()
+        response.raise_for_status()  # Raises HTTPError for bad responses (4xx or 5xx)
         data = response.json()
 
         if 'rates' in data and 'RUB' in data['rates']:
             rub_rate = data['rates']['RUB']
             return amount * rub_rate
         else:
-            raise ValueError(f"Could not retrieve RUB rate for {currency}")
+            # Логируем ошибку, прежде чем вернуть None
+            logging.error(f"Could not retrieve RUB rate for {currency}. API response: {data}")
+            return None  # Или raise ValueError, если отсутствие курса - это исключительная ситуация
 
     except requests.exceptions.RequestException as e:
-        raise Exception(f"API request failed: {e}")
+        # Логируем ошибку API
+        logging.error(f"API request failed: {e}")
+        return None  # Или raise Exception, если ошибка запроса критична
+    except json.JSONDecodeError as e:
+        logging.error(f"Failed to decode JSON: {e}")
+        return None

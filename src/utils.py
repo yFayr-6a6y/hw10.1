@@ -14,56 +14,21 @@ def load_transactions(file_path):
         list: Список словарей с данными о транзакциях. Возвращает пустой список,
               если файл пустой, содержит не список или не найден.
     """
-    transactions = []
     try:
-        if not os.path.exists(file_path):
-            return transactions
-
         with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
 
-        if isinstance(data, list):
-            transactions = data
+        if not isinstance(data, list):
+            return []  # Возвращаем пустой список, если данные не являются списком
 
-    except (FileNotFoundError, json.JSONDecodeError):
-        pass
+        return data
+    except FileNotFoundError:
+        return []  # Возвращаем пустой список, если файл не найден
+    except json.JSONDecodeError:
+        return [] # Возвращаем пустой список, если не удалось декодировать JSON
     except Exception as e:
         print(f"Unexpected error: {e}")
-
-    return transactions
-
-
-
-
-
-def load_transactions(file_path):
-    """
-    Загружает данные о финансовых транзакциях из JSON-файла.
-
-    Args:
-        file_path (str): Путь к JSON-файлу.
-
-    Returns:
-        list: Список словарей с данными о транзакциях. Возвращает пустой список,
-              если файл пустой, содержит не список или не найден.
-    """
-    transactions = []
-    try:
-        if not os.path.exists(file_path):
-            return transactions
-
-        with open(file_path, 'r', encoding='utf-8') as file:
-            data = json.load(file)
-
-        if isinstance(data, list):
-            transactions = data
-
-    except (FileNotFoundError, json.JSONDecodeError):
-        pass
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-
-    return transactions
+        return []  # Возвращаем пустой список в случае неожиданной ошибки (лучше логировать!)
 
 def get_transaction_amount_rub(transaction):
     """
