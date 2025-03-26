@@ -1,6 +1,9 @@
 import json
 import os
 from external_api import convert_to_rub
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def load_transactions(file_path):
@@ -19,16 +22,17 @@ def load_transactions(file_path):
             data = json.load(file)
 
         if not isinstance(data, list):
-            return []  # Возвращаем пустой список, если данные не являются списком
+            return []
 
         return data
     except FileNotFoundError:
-        return []  # Возвращаем пустой список, если файл не найден
+        return []
     except json.JSONDecodeError:
-        return [] # Возвращаем пустой список, если не удалось декодировать JSON
+        return []
     except Exception as e:
-        print(f"Unexpected error: {e}")
-        return []  # Возвращаем пустой список в случае неожиданной ошибки (лучше логировать!)
+        logging.error(f"Unexpected error: {e}")
+        return []
+
 
 def get_transaction_amount_rub(transaction):
     """
@@ -48,3 +52,14 @@ def get_transaction_amount_rub(transaction):
 
     amount = transaction['operationAmount'].get('amount')
     currency = transaction['operationAmount'].get('currency', 'RUB')
+
+    logging.debug(f"get_transaction_amount_rub: amount={amount}, currency={currency}")
+
+    if currency != 'RUB':
+        logging.info(f"Converting {amount} {currency} to RUB")
+        amount = convert_to_rub(amount, currency)
+        logging.info(f"Converted amount: {amount} RUB")
+    else:
+        logging.info(f"Transaction already in RUB: {amount}")
+
+    return amount
