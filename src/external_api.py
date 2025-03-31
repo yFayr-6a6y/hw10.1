@@ -1,15 +1,15 @@
 import os
 import requests
-import json  # Импорт json явно
-import logging  # Импорт logging
+import json
+import logging
 from dotenv import load_dotenv
 
-load_dotenv()  # Загружаем переменные окружения из .env
+load_dotenv()
 
 API_KEY = os.getenv('EXCHANGE_RATES_API_KEY')
 BASE_URL = "https://api.apilayer.com/exchangerates_data/latest"
 
-# Настройка логирования (лучше сделать это один раз в начале программы)
+
 logging.basicConfig(level=logging.ERROR, filename="app.log", filemode="w",
                     format='%(asctime)s - %(levelname)s - %(message)s')
 

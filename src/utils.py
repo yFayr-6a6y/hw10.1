@@ -50,16 +50,21 @@ def get_transaction_amount_rub(transaction):
     if 'operationAmount' not in transaction:
         raise ValueError("Transaction must have 'operationAmount' key.")
 
-    amount = transaction['operationAmount'].get('amount')
-    currency = transaction['operationAmount'].get('currency', 'RUB')
+    operation_amount = transaction['operationAmount']
+    amount = float(operation_amount.get('amount', 0))
+    currency_dict = operation_amount.get('currency', {'code': 'RUB'})  # По умолчанию RUB
+    currency_code = currency_dict.get('code', 'RUB')
 
-    logging.debug(f"get_transaction_amount_rub: amount={amount}, currency={currency}")
+    logging.debug(f"get_transaction_amount_rub: amount={amount}, currency={currency_code}")
 
-    if currency != 'RUB':
-        logging.info(f"Converting {amount} {currency} to RUB")
-        amount = convert_to_rub(amount, currency)
-        logging.info(f"Converted amount: {amount} RUB")
+    if currency_code != 'RUB':
+        logging.info(f"Converting {amount} {currency_code} to RUB")
+        converted_amount = convert_to_rub(amount, currency_code)
+        if converted_amount is None:
+            logging.error(f"Conversion failed for {amount} {currency_code}")
+            raise ValueError(f"Could not convert {currency_code} to RUB")
+        logging.info(f"Converted amount: {converted_amount} RUB")
+        return converted_amount
     else:
         logging.info(f"Transaction already in RUB: {amount}")
-
-    return amount
+        return amount
