@@ -1,7 +1,7 @@
 import pytest
 import logging
 import functools
-
+import sys
 
 
 def log(filename=None):
@@ -9,39 +9,73 @@ def log(filename=None):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             func_name = func.__name__
-            logging.basicConfig(filename=filename, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-            logging.info(f"Функция '{func_name}' начата")
+            # Настраиваем логирование
+            logger = logging.getLogger(func_name)
+            logger.setLevel(logging.INFO)
+
+            # Удаляем все существующие обработчики, чтобы избежать дублирования
+            logger.handlers = []
+
+            # Если filename указан, пишем в файл
+            if filename:
+                handler = logging.FileHandler(filename)
+            else:
+                # Иначе пишем в stdout
+                handler = logging.StreamHandler(sys.stdout)
+
+            handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+            logger.addHandler(handler)
+
+            logger.info(f"Функция '{func_name}' начата")
 
             try:
                 result = func(*args, **kwargs)
-                logging.info(f"Функция '{func_name}' окончена, результат: {result}")
+                logger.info(f"Функция '{func_name}' окончена, результат: {result}")
                 return result
             except Exception as e:
-                logging.basicConfig(filename=filename, level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
-                logging.error(f"Ошибка в функции '{func_name}' Ошибка: {type(e).__name__}. Вводные данные: {args}, {kwargs}")
+                # Настраиваем логирование для ошибок
+                logger.setLevel(logging.ERROR)
+                logger.error(
+                    f"Ошибка в функции '{func_name}' Ошибка: {type(e).__name__}. Вводные данные: {args}, {kwargs}")
                 raise
+            finally:
+                # Удаляем обработчик, чтобы не мешать другим тестам
+                logger.handlers = []
+
         return wrapper
+
     return decorator
 
 
-def test_logsuccess_console(captured_output):
-    @log
-    def add(x, y): return x + y
+def test_logsuccess_console(capsys):
+    @log()
+    def add(x, y):
+        return x + y
+
     assert add(2, 3) == 5
-    output = captured_output.getvalue()
+    captured = capsys.readouterr()
+    output = captured.out
     assert "Функция 'add' начата" in output
     assert "Функция 'add' окончена, результат: 5" in output
 
-def test_logerror_console(captured_output):
-    @log
-    def divide(x, y): return x / y
-    with pytest.raises(ZeroDivisionError): divide(5, 0)
-    output = captured_output.getvalue()
+
+def test_logerror_console(capsys):
+    @log()
+    def divide(x, y):
+        return x / y
+
+    with pytest.raises(ZeroDivisionError):
+        divide(5, 0)
+    captured = capsys.readouterr()
+    output = captured.out
     assert "Функция 'divide' начата" in output
     assert "Ошибка в функции 'divide' Ошибка: ZeroDivisionError" in output
     assert "Функция 'divide' окончена" not in output
 
+
 def test_logpreserves_function_name():
-    @log
-    def greet(): pass
+    @log()
+    def greet():
+        pass
+
     assert greet.__name__ == "greet"

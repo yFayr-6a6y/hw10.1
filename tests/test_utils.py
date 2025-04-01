@@ -1,7 +1,12 @@
-import unittest
-from unittest.mock import patch, Mock
+import sys
 import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+import unittest
+from unittest.mock import patch
 import json
+from src.utils import get_transaction_amount_rub, load_transactions
 
 class TestUtils(unittest.TestCase):
 
@@ -14,7 +19,7 @@ class TestUtils(unittest.TestCase):
         }
         self.assertEqual(get_transaction_amount_rub(transaction), 100.0)
 
-    @patch('external_api.convert_to_rub')
+    @patch('src.utils.convert_to_rub')
     def test_get_transaction_amount_rub_foreign(self, mock_convert_to_rub):
         mock_convert_to_rub.return_value = 4500.0
         transaction = {
@@ -36,7 +41,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(get_transaction_amount_rub(transaction), 2250.0)
         mock_convert_to_rub.assert_called_with(25.0, 'EUR')
 
-    @patch('external_api.convert_to_rub')
+    @patch('src.utils.convert_to_rub')
     def test_get_transaction_amount_rub_conversion_failure(self, mock_convert_to_rub):
         mock_convert_to_rub.return_value = None
         transaction = {
@@ -54,7 +59,7 @@ class TestUtils(unittest.TestCase):
         with self.assertRaises(ValueError):
             get_transaction_amount_rub({})
         with self.assertRaises(ValueError):
-            get_transaction_amount_rub({'operationAmount': {'currency': {'code': 'RUB'}}})  # Нет amount
+            get_transaction_amount_rub({'operationAmount': {'currency': {'code': 'RUB'}}})
 
     def test_load_transactions_file_handling(self):
         def run_load_test(file_content, expected_result):
