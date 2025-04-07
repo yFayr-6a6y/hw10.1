@@ -1,11 +1,13 @@
 import pytest
 
+
 def get_mask_card_number(card_number: int) -> str:
     """Маскирует номер карты (предполагается 16 цифр)."""
     if not isinstance(card_number, int):
         raise TypeError("номер карты должен быть целым числом")
     card_str = str(card_number).zfill(16)  # Дополняем до 16 цифр
     return f"{card_str[:4]} {card_str[4:6]}** **** {card_str[-4:]}"
+
 
 @pytest.mark.parametrize(
     "card_number, expected",
@@ -19,6 +21,7 @@ def get_mask_card_number(card_number: int) -> str:
 def test_mask_card_number_valid(card_number, expected):
     """Тестирует маскировку валидных номеров карт."""
     assert get_mask_card_number(card_number) == expected
+
 
 def test_mask_card_number_invalid_type():
     """Тестирует TypeError для некорректных типов."""

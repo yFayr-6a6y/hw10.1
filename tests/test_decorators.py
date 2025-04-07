@@ -1,7 +1,8 @@
-import pytest
-import logging
 import functools
+import logging
 import sys
+
+import pytest
 
 
 def log(filename=None):
@@ -23,7 +24,7 @@ def log(filename=None):
                 # Иначе пишем в stdout
                 handler = logging.StreamHandler(sys.stdout)
 
-            handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+            handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
             logger.addHandler(handler)
 
             logger.info(f"Функция '{func_name}' начата")
@@ -36,7 +37,8 @@ def log(filename=None):
                 # Настраиваем логирование для ошибок
                 logger.setLevel(logging.ERROR)
                 logger.error(
-                    f"Ошибка в функции '{func_name}' Ошибка: {type(e).__name__}. Вводные данные: {args}, {kwargs}")
+                    f"Ошибка в функции '{func_name}' Ошибка: {type(e).__name__}. Вводные данные: {args}, {kwargs}"
+                )
                 raise
             finally:
                 # Удаляем обработчик, чтобы не мешать другим тестам

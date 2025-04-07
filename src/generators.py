@@ -6,14 +6,13 @@ def filter_by_currency(transactions, currency_code):
         return
 
     for transaction in transactions:
-        operation_amount = transaction.get('operationAmount')
+        operation_amount = transaction.get("operationAmount")
         if operation_amount:
-            currency = operation_amount.get('currency')
+            currency = operation_amount.get("currency")
             if currency:
-                code = currency.get('code')
+                code = currency.get("code")
                 if code == currency_code:
                     yield transaction
-
 
 
 def transaction_descriptions(transactions):
@@ -24,12 +23,13 @@ def transaction_descriptions(transactions):
         return
 
     for transaction in transactions:
-        description = transaction.get('description')  # Используем .get(), чтобы избежать KeyError
+        description = transaction.get("description")  # Используем .get(), чтобы избежать KeyError
 
         if description is None:
             yield "Описание отсутствует"
         else:
             yield description
+
 
 def card_number_generator(start, end):
     """
@@ -39,8 +39,6 @@ def card_number_generator(start, end):
         card_number_str = str(number).zfill(16)
 
         formatted_card_number = (
-            f"{card_number_str[0:4]} {card_number_str[4:8]} "
-            f"{card_number_str[8:12]} {card_number_str[12:16]}"
+            f"{card_number_str[0:4]} {card_number_str[4:8]} " f"{card_number_str[8:12]} {card_number_str[12:16]}"
         )
         yield formatted_card_number
-

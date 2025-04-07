@@ -1,4 +1,3 @@
-from typing import Optional, Tuple
 import re
 from datetime import datetime
 
@@ -29,7 +28,6 @@ def mask_account_card(card_info: str) -> str:
 
 def get_date(date_str: str) -> str:
     """функция для даты"""
-    from datetime import datetime
 
     date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f")
     return date_obj.strftime("%d.%m.%Y")

@@ -1,13 +1,18 @@
-import pytest
 import re
+
+import pytest
+
 
 def mask_account_card(s: str) -> str:
     """Маскирует карту/счет или возвращает исходную строку."""
     m = re.match(r"(Visa|Maestro) (\d{16})", s)
-    if m: return f"{m[1]} {m[2][:4]} {m[2][4:6]}** **** {m[2][-4:]}"
+    if m:
+        return f"{m[1]} {m[2][:4]} {m[2][4:6]}** **** {m[2][-4:]}"
     m = re.match(r"(Счет) (\d{20})", s)
-    if m: return f"{m[1]} **{m[2][-4:]}"
+    if m:
+        return f"{m[1]} **{m[2][-4:]}"
     return s
+
 
 @pytest.mark.parametrize(
     "s, expected",

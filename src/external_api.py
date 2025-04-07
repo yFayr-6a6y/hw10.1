@@ -1,17 +1,22 @@
-import os
-import requests
 import json
 import logging
+import os
+
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
-API_KEY = os.getenv('EXCHANGE_RATES_API_KEY')
+API_KEY = os.getenv("EXCHANGE_RATES_API_KEY")
 BASE_URL = "https://api.apilayer.com/exchangerates_data/latest"
 
 
-logging.basicConfig(level=logging.ERROR, filename="app.log", filemode="w",
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.ERROR,
+    filename="app.log",
+    filemode="w",
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
 
 def convert_to_rub(amount, currency):
@@ -26,7 +31,7 @@ def convert_to_rub(amount, currency):
         float: Сумма в рублях.
         Возвращает None, если не удалось получить курс обмена.
     """
-    if currency == 'RUB':
+    if currency == "RUB":
         return amount
 
     if not API_KEY:
@@ -40,8 +45,8 @@ def convert_to_rub(amount, currency):
         response.raise_for_status()  # Raises HTTPError for bad responses (4xx or 5xx)
         data = response.json()
 
-        if 'rates' in data and 'RUB' in data['rates']:
-            rub_rate = data['rates']['RUB']
+        if "rates" in data and "RUB" in data["rates"]:
+            rub_rate = data["rates"]["RUB"]
             return amount * rub_rate
         else:
             # Логируем ошибку, прежде чем вернуть None
