@@ -1,8 +1,9 @@
+import json
 import os
 import sys
-import json
 import unittest
 from unittest.mock import patch
+
 from src.utils import get_transaction_amount_rub, load_transactions
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))

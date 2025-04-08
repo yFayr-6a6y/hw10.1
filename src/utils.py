@@ -1,7 +1,9 @@
 import json
 import logging
 import os
+from pathlib import Path
 
+from .data_reader import read_csv_transactions, read_excel_transactions
 from .external_api import convert_to_rub
 
 logger = logging.getLogger("utils")
@@ -26,15 +28,45 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-def load_transactions(file_path):
-    """Загружает транзакции из JSON-файла."""
+def load_transactions(file_path: str) -> list:
+    """
+    Загружает транзакции из файла (JSON, CSV или XLSX).
+
+    Args:
+        file_path (str): Путь к файлу с транзакциями.
+
+    Returns:
+        list: Список транзакций в формате списка словарей.
+    """
     logger.info(f"Начало загрузки транзакций из файла: {file_path}")
+
+    if not os.path.exists(file_path):
+        logger.error(f"Файл {file_path} не существует")
+        return []
+
+    # Определяем формат файла по расширению
+    file_extension = Path(file_path).suffix.lower()
+
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            transactions = json.load(f)
-        logger.info(f"Транзакции успешно загружены, количество: {len(transactions)}")
-        return transactions
-    except (FileNotFoundError, json.JSONDecodeError, TypeError) as e:
+        if file_extension == ".json":
+            with open(file_path, "r", encoding="utf-8") as f:
+                transactions = json.load(f)
+            logger.info(f"Транзакции успешно загружены из JSON, количество: {len(transactions)}")
+            return transactions
+
+        elif file_extension == ".csv":
+            transactions = read_csv_transactions(file_path)
+            return transactions
+
+        elif file_extension in [".xlsx", ".xls"]:
+            transactions = read_excel_transactions(file_path)
+            return transactions
+
+        else:
+            logger.error(f"Неподдерживаемый формат файла: {file_extension}")
+            raise ValueError(f"Unsupported file format: {file_extension}")
+
+    except Exception as e:
         logger.error(f"Ошибка загрузки файла {file_path}: {e}")
         return []
 
