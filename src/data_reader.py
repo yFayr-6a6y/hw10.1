@@ -74,11 +74,6 @@ def read_csv_transactions(file_path: str) -> list:
     try:
         df = pd.read_csv(file_path)
 
-        required_columns = ["id", "operationAmount.amount", "operationAmount.currency.code"]
-        if not all(col in df.columns for col in required_columns):
-            logger.error(f"CSV файл {file_path} не содержит всех обязательных столбцов: {required_columns}")
-            return []
-
         flat_transactions = df.to_dict("records")
 
         transactions = [_convert_flat_to_nested(tx) for tx in flat_transactions]
@@ -112,11 +107,6 @@ def read_excel_transactions(file_path: str) -> list:
 
     try:
         df = pd.read_excel(file_path, engine="openpyxl")
-
-        required_columns = ["id", "operationAmount.amount", "operationAmount.currency.code"]
-        if not all(col in df.columns for col in required_columns):
-            logger.error(f"Excel файл {file_path} не содержит всех обязательных столбцов: {required_columns}")
-            return []
 
         flat_transactions = df.to_dict("records")
 
