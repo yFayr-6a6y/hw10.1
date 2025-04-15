@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import Dict, List
 
+from src.processing import filter_by_state, sort_by_date
 from src.utils import (
     load_transactions,
     get_transaction_amount_rub,
@@ -20,17 +20,15 @@ def format_transaction(transaction: Dict) -> str:
     Returns:
         str: Отформатированная строка с информацией о транзакции.
     """
-    # Форматируем дату
     date_str = transaction.get("date", "")
-    formatted_date = get_date(date_str)  # Используем get_date из widget.py
+    formatted_date = get_date(date_str)
 
     description = transaction.get("description", "Описание отсутствует")
-
 
     from_account = transaction.get("from", "")
     to_account = transaction.get("to", "")
     if from_account and to_account:
-        from_account = mask_account_card(from_account)  # Маскируем с помощью mask_account_card
+        from_account = mask_account_card(from_account)
         to_account = mask_account_card(to_account)
         from_to = f"{from_account} -> {to_account}"
     elif to_account:
@@ -53,12 +51,14 @@ def main():
     """
     Основная логика программы для работы с банковскими транзакциями.
     """
+    # Приветствие
     print("Привет! Добро пожаловать в программу работы с банковскими транзакциями.")
     print("Выберите необходимый пункт меню:")
     print("1. Получить информацию о транзакциях из JSON-файла")
     print("2. Получить информацию о транзакциях из CSV-файла")
     print("3. Получить информацию о транзакциях из XLSX-файла")
 
+    # Выбор типа файла
     file_choice = input().strip()
     file_path = ""
     if file_choice == "1":
@@ -74,13 +74,11 @@ def main():
         print("Неверный выбор. Завершение программы.")
         return
 
-    # Загружаем транзакции
     transactions = load_transactions(file_path)
     if not transactions:
         print("Не удалось загрузить транзакции. Завершение программы.")
         return
 
-    # Фильтрация по статусу
     available_statuses = ["EXECUTED", "CANCELED", "PENDING"]
     while True:
         print("Введите статус, по которому необходимо выполнить фильтрацию.")
@@ -88,19 +86,18 @@ def main():
         status = input().strip().upper()
         if status in available_statuses:
             print(f'Операции отфильтрованы по статусу "{status}"')
-            transactions = [tx for tx in transactions if tx.get("state", "").upper() == status]
+            transactions = filter_by_state(transactions, state=status)
             break
         else:
             print(f'Статус операции "{status}" недоступен.')
 
-    # Сортировка по дате
     print("Отсортировать операции по дате? Да/Нет")
-    sort_by_date = input().strip().lower()
-    if sort_by_date == "да":
+    sort_by_date_choice = input().strip().lower()
+    if sort_by_date_choice == "да":
         print("Отсортировать по возрастанию или по убыванию?")
         sort_order = input().strip().lower()
-        reverse = sort_order != "по возрастанию"
-        transactions.sort(key=lambda x: x.get("date", ""), reverse=reverse)
+        descending = sort_order != "по возрастанию"
+        transactions = sort_by_date(transactions, descending=descending)
 
     print("Выводить только рублевые транзакции? Да/Нет")
     rub_only = input().strip().lower()
