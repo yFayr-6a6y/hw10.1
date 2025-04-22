@@ -1,0 +1,49 @@
+[
+    {
+        "id": 650703,
+        "state": "EXECUTED",
+        "date": "2023-09-05T11:30:32Z",
+        "operationAmount": {
+            "amount": 16210,
+            "currency": {"code": "PEN"}
+        },
+        "description": "Перевод организации",
+        "from": "Счет 58803664561298323391",
+        "to": "Счет 39745660563456619397"
+    },
+    {
+        "id": 650704,
+        "state": "EXECUTED",
+        "date": "2023-09-04T10:20:15Z",
+        "operationAmount": {
+            "amount": 8200,
+            "currency": {"code": "RUB"}
+        },
+        "description": "Перевод со счета на счет",
+        "from": "Счет 12345678901234567890",
+        "to": "Счет 09876543210987654321"
+    },
+    {
+        "id": 650705,
+        "state": "CANCELED",
+        "date": "2023-09-03T09:15:45Z",
+        "operationAmount": {
+            "amount": 130,
+            "currency": {"code": "USD"}
+        },
+        "description": "Перевод с карты на карту",
+        "from": "MasterCard 7771273727",
+        "to": "Visa Platinum 1293389203"
+    },
+    {
+        "id": 650706,
+        "state": "EXECUTED",
+        "date": "2023-09-02T08:00:00Z",
+        "operationAmount": {
+            "amount": 40542,
+            "currency": {"code": "RUB"}
+        },
+        "description": "Открытие вклада",
+        "to": "Счет 12344321"
+    }
+]

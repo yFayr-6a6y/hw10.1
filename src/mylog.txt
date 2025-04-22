@@ -1,0 +1,6 @@
+2025-02-27 17:33:02,094 - INFO - Function 'my_function' started
+2025-02-27 17:33:02,094 - INFO - Function 'my_function' ok, Result: 3
+2025-02-27 17:33:02,094 - INFO - Function 'divide' started
+2025-02-27 17:33:02,095 - INFO - Function 'divide' ok, Result: 2.0
+2025-02-27 17:33:02,095 - INFO - Function 'divide' started
+2025-02-27 17:33:02,095 - ERROR - Function 'divide' error: ZeroDivisionError. Inputs: (5, 0), {}
