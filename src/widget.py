@@ -27,7 +27,20 @@ def mask_account_card(card_info: str) -> str:
 
 
 def get_date(date_str: str) -> str:
-    """функция для даты"""
+    """
+    Форматирует строку даты в формат ДД.ММ.ГГГГ.
 
-    date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f")
+    Args:
+        date_str (str): Строка даты в формате ISO 8601 (с или без микросекунд).
+
+    Returns:
+        str: Отформатированная дата в формате ДД.ММ.ГГГГ.
+    """
+    try:
+        date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f")
+    except ValueError:
+        try:
+            date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
+        except ValueError:
+            return date_str
     return date_obj.strftime("%d.%m.%Y")
